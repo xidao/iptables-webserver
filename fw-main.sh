@@ -70,6 +70,20 @@ function main(){
 
     ### DROP REJECT stuff to follow
 
+    ### Reject BlackLISTED IPs
+    # Before some more elaborate (and CPU intensive) rules are evaluated, lets quickly
+    # reject traffic from all IPs listed in ip-blacklist.conf.
+    FILE=${DIR}/conf/ip-blacklist.conf
+
+    while read line;
+        do
+            line=${line//[[:space:]]/}
+            if [[ $line != *#* && "$line" != "" ]]
+                then
+                    $IPTABLES -A INPUT -s $line -j DROP
+            fi
+        done < $FILE
+
     # INVALID packets are dropped. 
     if $LOGINVALID;
         then
